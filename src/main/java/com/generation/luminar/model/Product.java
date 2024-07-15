@@ -2,10 +2,7 @@ package com.generation.luminar.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,11 +36,12 @@ public class Product {
     private String image;
 
     @ManyToOne
-    @JsonIgnoreProperties("products")
-    @NotBlank(message = "O atributo categoria é obrigatório")
+    @NotNull(message = "O atributo categoria é obrigatório")
+    @JsonIgnoreProperties({"products","user"})
     private Category category;
 
     @ManyToOne
+    @JsonIgnoreProperties({"user","products"})
     private User user;
 
 }

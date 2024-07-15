@@ -1,6 +1,7 @@
 package com.generation.luminar.controller;
 
 import com.generation.luminar.model.Product;
+import com.generation.luminar.repository.CategoryRepository;
 import com.generation.luminar.repository.ProductRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @GetMapping
     public ResponseEntity<List<Product>> getAll() {
@@ -39,16 +42,21 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<Product> post(@Valid @RequestBody Product name) {
-        return ResponseEntity.status(HttpStatus.CREATED)
+        if(categoryRepository.existsById(name.getCategory().getId()))
+            return ResponseEntity.status(HttpStatus.CREATED)
                 .body(productRepository.save(name));
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Categoria não existe",null);
     }
 
     @PutMapping
     public ResponseEntity<Product> put(@Valid @RequestBody Product name) {
-        return productRepository.findById(name.getId())
-                .map(response -> ResponseEntity.status(HttpStatus.CREATED)
-                        .body(productRepository.save(name)))
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        if(productRepository.existsById(name.getId())){
+            if(categoryRepository.existsById(name.getId()))
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(productRepository.save(name));
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Categoria não existe",null);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
