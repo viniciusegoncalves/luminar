@@ -13,16 +13,15 @@ import org.springframework.web.server.ResponseStatusException;
 import com.generation.luminar.model.User;
 import com.generation.luminar.repository.UserRepository;
 
-import org.springframework.security.core.userdetails.UserDetailsService;
 @Service
-public class UserDatailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
-        Optional<User> user = userRepository.findByUser(userName);
+        Optional<User> user = userRepository.findByName(userName);
 
         if (user.isPresent())
             return new UserDetailsImpl(user.get());

@@ -37,11 +37,11 @@ public class Product {
 
     @ManyToOne
     @NotNull(message = "O atributo categoria é obrigatório")
-    @JsonIgnoreProperties({"products","user"})
+    @JsonIgnoreProperties("product")
     private Category category;
 
     @ManyToOne
-    @JsonIgnoreProperties({"user","products"})
+    @JsonIgnoreProperties("product")
     private User user;
 
 }

@@ -8,7 +8,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,8 +29,8 @@ public class BasicSecurityConfig {
 
 
     @Bean
-    UserDetailsService userDetailsService(){
-        return new UserDatailsServiceImpl();
+    UserDetailsService userDetailsService() {
+        return new UserDetailsServiceImpl();
     }
 
     @Bean
@@ -41,7 +40,7 @@ public class BasicSecurityConfig {
 
     @Bean
     AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authenticationProvider =new DaoAuthenticationProvider();
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService());
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
@@ -49,19 +48,19 @@ public class BasicSecurityConfig {
 
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception{
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http)throws Exception{
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .sessionManagement(managemant -> managemant
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .csrf(csrf->csrf.disable())
+                .csrf(csrf -> csrf.disable())
                 .cors(withDefaults());
         http
-                .authorizeHttpRequests((auth)->auth
+                .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/users/login").permitAll()
                         .requestMatchers("/users/sign_in").permitAll()
                         .requestMatchers("/error/**").permitAll()

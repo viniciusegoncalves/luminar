@@ -1,6 +1,5 @@
 package com.generation.luminar.model;
 
-import jakarta.persistence.GeneratedValue;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +11,7 @@ public class UserLogin {
     private String name;
     private String password;
     private String photo;
+    private String email;
     private String token;
-
 
 }

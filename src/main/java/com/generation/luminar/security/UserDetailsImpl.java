@@ -10,7 +10,7 @@ import java.util.List;
 
 public class UserDetailsImpl implements UserDetails  {
 
-    private static final Long serialVersionUId = 1L;
+    private static final Long serialVersionUID= 1L;
 
     private String userName;
     private String password;
@@ -22,9 +22,7 @@ public class UserDetailsImpl implements UserDetails  {
         this.password = user.getPassword();
     }
 
-    public UserDetailsImpl(){
-
-    }
+    public UserDetailsImpl(){}
 
 
     @Override
@@ -59,6 +57,6 @@ public class UserDetailsImpl implements UserDetails  {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true;
     }
 }

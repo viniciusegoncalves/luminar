@@ -30,7 +30,7 @@ public class UserService {
 
     public Optional<User> singUser(User user) {
 
-        if (userRepository.findByUser(user.getName()).isPresent())
+        if (userRepository.findByName(user.getEmail()).isPresent())
             return Optional.empty();
 
         user.setPassword(encryptPassword(user.getPassword()));
@@ -43,7 +43,7 @@ public class UserService {
 
         if(userRepository.findById(user.getId()).isPresent()) {
 
-            Optional<User> findUser = userRepository.findByUser(user.getName());
+            Optional<User> findUser = userRepository.findByName(user.getEmail());
 
             if ( (findUser.isPresent()) && ( findUser.get().getId() != user.getId()))
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já existe!", null);
@@ -60,45 +60,32 @@ public class UserService {
 
     public Optional<UserLogin> authenticateUser (Optional<UserLogin> userLogin) {
 
-        // Gera o Objeto de autenticação
-        var credentials = new UsernamePasswordAuthenticationToken(userLogin.get().getName(),userLogin.get().getPassword());
+        var credentials = new UsernamePasswordAuthenticationToken(userLogin.get().getEmail(),userLogin.get().getPassword());
 
-        // Autentica o user
         Authentication authentication = authenticationManager.authenticate(credentials);
 
-        // Se a autenticação foi efetuada com sucesso
         if (authentication.isAuthenticated()) {
 
-            // Busca os dados do usuário
-            Optional<User> user = userRepository.findByUser(userLogin.get().getName());
+            Optional<User> user = userRepository.findByName(userLogin.get().getEmail());
 
-            // Se o usuário foi encontrado
             if (user.isPresent()) {
 
-                // Preenche o Objeto usuarioLogin com os dados encontrados
                 userLogin.get().setId(user.get().getId());
-                userLogin.get().setName(user.get().getName());
+                userLogin.get().setName(user.get().getEmail());
                 userLogin.get().setPhoto(user.get().getPhoto());
-                userLogin.get().setToken(generateToken(userLogin.get().getName()));
+                userLogin.get().setToken(generateToken(userLogin.get().getEmail()));
                 userLogin.get().setPassword("");
 
-                // Retorna o Objeto preenchido
                 return userLogin;
-
             }
-
         }
-
         return Optional.empty();
-
     }
 
-    private String encryptPassword(String senha) {
+    private String encryptPassword(String password) {
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-        return encoder.encode(senha);
-
+        return encoder.encode(password);
     }
 
     private String generateToken(String user) {

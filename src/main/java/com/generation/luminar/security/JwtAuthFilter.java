@@ -28,7 +28,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     JwtService jwtService;
 
     @Autowired
-    UserDatailsServiceImpl userDatailsService;
+    UserDetailsServiceImpl userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -37,26 +37,28 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
         String token = null;
-        String userName =null;
+        String username =null;
 
-        try {
-            if (authHeader!= null && authHeader.startsWith("Bearer ")){
+        try{
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 token = authHeader.substring(7);
-                userName = jwtService.extractUsername(token);
+                username = jwtService.extractUsername(token);
             }
-            if (userName!=null && SecurityContextHolder.getContext().getAuthentication()==null){
-                UserDetails userDetails = userDatailsService.loadUserByUsername(userName);
-                if (jwtService.validateToken(token,userDetails)){
-                    UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(userDetails,null,
-                                    userDetails.getAuthorities());
+
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                if (jwtService.validateToken(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
+
             }
-            filterChain.doFilter(request,response);
-        }catch (ExpiredJwtException| UnsupportedJwtException | MalformedJwtException|
-                SignatureException| ResponseStatusException e){
+            filterChain.doFilter(request, response);
+
+        }catch(ExpiredJwtException | UnsupportedJwtException | MalformedJwtException
+               | SignatureException | ResponseStatusException e){
             response.setStatus(HttpStatus.FORBIDDEN.value());
             return;
         }
