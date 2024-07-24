@@ -1,5 +1,6 @@
 package com.generation.luminar.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -29,6 +30,7 @@ public class User {
     @NotBlank(message = "O atributo email é obrigatório")
     @Size(max = 255, message = "O atributo email deve conter no máximo 255 caracteres")
     @Column(name = "email", unique = true)
+    @Schema(example = "email@email.com.br")
     @Email(message = "E-mail deve ser válido")
     private String email;
 
@@ -40,6 +42,5 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties("user")
     private List<Product> product;
-
 
 }
