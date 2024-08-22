@@ -19,7 +19,6 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @NotBlank(message = "O atributo nome é obrigatório")
     @Size(max = 255, message = "O atributo nome deve conter no máximo 255 caracteres")
     private String name;
@@ -35,16 +34,12 @@ public class Product {
     @PositiveOrZero(message = "O preço deve ser zero ou positivo")
     private Double price;
 
-
-    @NotBlank(message = "O atributo imagem é obrigatório")
     private String image;
 
     @ManyToOne
     @JsonIgnoreProperties("products")
-    @NotBlank(message = "O atributo categoria é obrigatório")
     private Category category;
 
     @ManyToOne
     private User user;
-
 }
